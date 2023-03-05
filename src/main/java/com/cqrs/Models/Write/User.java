@@ -1,4 +1,7 @@
-package main.java.com.cqrs.Models;
+package main.java.com.cqrs.Models.Write;
+
+import main.java.com.cqrs.Models.Write.Address;
+import main.java.com.cqrs.Models.Write.Contact;
 
 import java.util.Set;
 

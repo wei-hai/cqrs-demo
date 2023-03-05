@@ -1,9 +1,15 @@
-package main.java.com.cqrs.Models;
+package main.java.com.cqrs.Models.Write;
 
 public class Address {
     private String city;
     private String state;
     private String postcode;
+
+    public Address(String city, String state, String postcode) {
+        this.city = city;
+        this.state = state;
+        this.postcode = postcode;
+    }
 
     public String getCity() {
         return city;

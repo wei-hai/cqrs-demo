@@ -1,4 +1,4 @@
-package main.java.com.cqrs.Models;
+package main.java.com.cqrs.Models.Write;
 
 public class Contact {
     private String type;

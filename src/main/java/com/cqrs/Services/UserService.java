@@ -1,53 +1,38 @@
 package main.java.com.cqrs.Services;
 
-import main.java.com.cqrs.Models.Address;
-import main.java.com.cqrs.Models.Contact;
-import main.java.com.cqrs.Models.User;
-import main.java.com.cqrs.Repositories.UserRepository;
+import main.java.com.cqrs.Aggregators.UserAggregator;
+import main.java.com.cqrs.Commands.CreateUserCommand;
+import main.java.com.cqrs.Commands.UpdateUserCommand;
+import main.java.com.cqrs.Models.Write.Address;
+import main.java.com.cqrs.Models.Write.Contact;
+import main.java.com.cqrs.Projectors.UserProjector;
+import main.java.com.cqrs.Queries.UserAddressByRegionQuery;
+import main.java.com.cqrs.Queries.UserContactByTypeQuery;
 
-import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 public class UserService {
-    private final UserRepository userRepository;
+    private UserAggregator userAggregator;
+    private UserProjector userProjector;
 
-    public UserService(UserRepository repository) {
-        userRepository = repository;
+    public UserService(UserAggregator userAggregator, UserProjector userProjector) {
+        this.userAggregator = userAggregator;
+        this.userProjector = userProjector;
     }
 
     public void createUser(String userId, String firstName, String lastName) {
-        User user = new User(userId, firstName, lastName);
-        userRepository.addUser(userId, user);
+        this.userAggregator.handleCreateUserCommand(new CreateUserCommand(userId, firstName, lastName));
     }
 
     public void updateUser(String userId, Set<Contact> contacts, Set<Address> addresses) {
-        Optional<User> optionalUser = userRepository.getUser(userId);
-        if (optionalUser.isPresent()) {
-            User user = optionalUser.get();
-            user.setContacts(contacts);
-            user.setAddresses(addresses);
-            userRepository.addUser(userId, user);
-        }
+        this.userAggregator.handleUpdateUserCommand(new UpdateUserCommand(userId, contacts, addresses));
     }
 
-    public Optional<Set<Contact>> getContactByType(String userId, String contactType) {
-        Optional<User> optionalUser = userRepository.getUser(userId);
-        if (optionalUser.isPresent()) {
-            User user = optionalUser.get();
-            Set<Contact> contacts = user.getContacts();
-            return Optional.of(contacts.stream().filter(c -> c.getType().equals(contactType)).collect(Collectors.toSet()));
-        }
-        return Optional.empty();
+    public Set<Contact> getContactByType(String userId, String contactType) {
+        return this.userProjector.handleUserContactByTypeQuery(new UserContactByTypeQuery(userId, contactType));
     }
 
-    public Optional<Set<Address>> getAddressByRegion(String userId, String state) {
-        Optional<User> optionalUser = userRepository.getUser(userId);
-        if (optionalUser.isPresent()) {
-            User user = optionalUser.get();
-            Set<Address> address = user.getAddresses();
-            return Optional.of(address.stream().filter(a -> a.getState().equals(state)).collect(Collectors.toSet()));
-        }
-        return Optional.empty();
+    public Set<Address> getAddressByRegion(String userId, String state) {
+        return this.userProjector.handleUserAddressByRegionQuery(new UserAddressByRegionQuery(userId, state));
     }
 }
