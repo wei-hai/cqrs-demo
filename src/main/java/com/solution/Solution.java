@@ -1,12 +1,14 @@
 package main.java.com.solution;
 
-import com.sun.source.tree.Tree;
-
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedList;
 
 public class Solution {
     private Integer result;
     private ArrayList path;
+
     public ArrayList<ArrayList<Integer>> twoSum(ArrayList<Integer> nums, Integer target) {
         HashMap<Integer, Integer> counter = new HashMap<>();
         for (Integer num : nums) {
@@ -53,10 +55,10 @@ public class Solution {
             return;
         }
         visited[x][y] = true;
-        this.dfs(matrix, m, n, x-1, y, visited);
-        this.dfs(matrix, m, n, x+1, y, visited);
-        this.dfs(matrix, m, n, x, y-1, visited);
-        this.dfs(matrix, m, n, x, y+1, visited);
+        this.dfs(matrix, m, n, x - 1, y, visited);
+        this.dfs(matrix, m, n, x + 1, y, visited);
+        this.dfs(matrix, m, n, x, y - 1, visited);
+        this.dfs(matrix, m, n, x, y + 1, visited);
     }
 
     public Integer minCostDFS(TreeNode root) {
@@ -80,13 +82,13 @@ public class Solution {
             if (result > tempCost + node.getValue()) {
                 result = tempCost + node.getValue();
                 tempPath.add(node.getValue());
-                path = (ArrayList)tempPath.clone();
+                path = (ArrayList) tempPath.clone();
             }
             return;
         }
         tempPath.add(node.getValue());
         this.minCostDFSHelper(node.getLeft(), tempCost + node.getValue(), tempPath);
-        tempPath.remove(tempPath.size()-1);
+        tempPath.remove(tempPath.size() - 1);
         this.minCostDFSHelper(node.getRight(), tempCost + node.getValue(), tempPath);
     }
 
@@ -99,7 +101,7 @@ public class Solution {
                 TreeNode node = queue.poll();
                 if (node.getLeft() == null && node.getRight() == null) {
                 }
-             }
+            }
         }
         return result;
     }
